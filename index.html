@@ -1,72 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>weather</title>
-    <link rel="stylesheet" href="icon/iconfont.css">
-    <link rel="stylesheet" href="src/assets/animate.css">
-    <meta name="viewport" content="width=device-width,initial-scale=1" >
-    <style>
-      html,body{
-        width:100%;
-        height:100%;
-        overflow:hidden;
-        font-family: PingFangSC-Regular, sans-serif;
-        margin:0;
-        padding:0;
-        background:#58cce9;
-        -webkit-overflow-scrolling: touch;
-      }
-      div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,blockquote,p{padding:0; margin:0;}  
-      table,td,tr,th{font-size:12px;}  
-      li{list-style-type:none;}  
-      img{vertical-align:top;border:0;}  
-      ol,ul {list-style:none;}  
-      h1,h2,h3,h4,h5,h6{font-size:12px; font-weight:normal;}  
-      address,cite,code,em,th {font-weight:normal; font-style:normal;}  
-      .mint-header{
-        background:#58cce9 !important;
-      }
-    </style>
-  </head>
-  <body>
-    # 朱良灿周报
-
-### sop项目迭代DD908
-
-  + 本周进展:
-
-    + —— 本周二发布了日常，能够随时修复测试提出的问题。目前并没有遗留的严重问题。
-
-  + 总完成度：  
-    
-    + 目前测试的完成度在60%~70%左右。
-
-  + 预计上线时间：09-12
-
-  + 问题：
-
-      + 1、 目前存在一个样式上的问题，但是实现起来比较复杂。所以需要沟通下。
-
-      + 2、迭代DD-824发布的过程中遇到，项目应用中的静态资源文件或依赖文件的引用问题。在月良和城池等人的帮助下已经解决。
-
-### 参与sop新需求评审。
-
-  + 因为新需求是移动端的。所以我调研了些新需求有可能遇到哪些难点。并了解antd-mobil的组件和现有移动端应用的代码。
-
-  + 问题：针对新需求和antd-mobile 组件比不太符合的时候，需要才用新的样式组件。
-
-## 感想
-
-  根据最新的需求来看，h5的需求越来越多，所以我认为有必要去开发新的移动端组件库。这样的话虽然前期开发工作量比较大，但是能够减少后续开发的工作量。前人栽树，后人乘凉。
-
-## 下周计划
-
-  + 下周的主要计划：
-  
-    + 1、处理迭代DD-908测试过程中出现的问题。
-    + 2、熟悉新的移动端需求。
-    + 3、考虑移动端选用组件库，并开发移动端核心代码库。
-
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href="1.css" rel="stylesheet" media="screen">
+  <link href="2.css" rel="stylesheet" media="screen">
+  <title>朱良灿的工作报告</title>
+  <style>
+    body{
+      box-sizing: border-box;
+      padding: 30px;
+    }
+  </style>
+</head>
+<body>
+  <article id="markdown" class="markdown-body"><h1 id="">朱良灿周报</h1>
+    <h3 id="sopdd908">sop项目迭代DD908</h3>
+    <ul>
+    <li>
+    <p>本周进展:</p>
+    <ul>
+    <li>—— 日常测试已经基本完成。正在等待发布到预发。</li>
+    </ul>
+    </li>
+    <li>
+    <p>总完成度：</p>
+    <ul>
+    <li>目前测试的完成度在100%。</li>
+    </ul>
+    </li>
+    <li>
+    <p>预计上线时间：09-12</p>
+    </li>
+    <li>
+    <p>问题：</p>
+    <ul>
+    <li>尚未发现问题。</li>
+    </ul>
+    </li>
+    </ul>
+    <h3 id="sop-dd912">sop 项目迭代DD912</h3>
+    <ul>
+    <li>
+    <p>本周进展：</p>
+    <ul>
+    <li>因为去掉导航栏，修改公共组件库。已经发布到日常正在测试阶段。</li>
+    </ul>
+    </li>
+    <li>
+    <p>总完成度：</p>
+    <ul>
+    <li>根据目前的测试情况总体完成度在90%以上。</li>
+    </ul>
+    </li>
+    <li>
+    <p>预计上线时间 ：9-12</p>
+    </li>
+    <li>
+    <p>问题：</p>
+    <ul>
+    <li>尚未发现任何问题。</li>
+    </ul>
+    </li>
+    </ul>
+    <h3 id="sop-ddh5">sop 项目跌打 DD工作报告H5</h3>
+    <ul>
+    <li>
+    <p>本周进展：</p>
+    <ul>
+    <li>
+    <p>因为需求迭代并没有完全开始，所以现在做的是移动端组件库的搭建。根据antd-mobile和需求分档中功能以及样式的差异封装组件。</p>
+    </li>
+    <li>
+    <p>本周开发的组件 包括</p>
+    <ul>
+    <li>1、ListRefresh(下拉刷新，上拉加载组件)。</li>
+    <li>2、MultipleSelect(多级选择组件)。</li>
+    <li>3、SearchSelect(搜索选择组件)。</li>
+    <li>4、SelectList(选择组件)。</li>
+    </ul>
+    </li>
+    <li>
+    <p>编辑组件说明文档并发布到tnpm 中。</p>
+    </li>
+    </ul>
+    </li>
+    <li>
+    <p>总完成度：</p>
+    <p>针对组件库我和杨光一起完成的组件，大概是组件库的60%左右。</p>
+    </li>
+    <li>
+    <p>预计上线时间：</p>
+    <ul>
+    <li>项目并没有开始，未知上线时间。</li>
+    </ul>
+    </li>
+    <li>
+    <p>问题：</p>
+    <p>关于移动端组件存在一些样式的问题。我们在编写移动端样式的时候，是采用 rem 布局还是 px 布局。</p>
+    </li>
+    </ul>
+    <h2 id="">下周计划</h2>
+    <ul>
+    <li>
+    <p>下周的主要计划：</p>
+    <ul>
+    <li>1、跟进迭代DD912发布到线上。</li>
+    <li>2、继续开发移动端组件库。</li>
+    <li>3、DD工作报告H5进入正式开发阶段。</li>
+    </ul>
+    </li>
+    </ul>
+    </article>
+</body>
 </html>
