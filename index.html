@@ -13,7 +13,7 @@
   </style>
 </head>
 <body>
-  <textarea id="content" cols="30" rows="10" placeholder="多个人用','分隔开'"></textarea>
+  <textarea id="content" cols="30" rows="10" placeholder="多个人用'、'分隔开'"></textarea>
   <br/>
   <button id="btn">生成名单</button>
   <h5>名单</h5>
@@ -33,7 +33,7 @@
       alert('输入框为空！')
       return
     }
-    var arr = input.split(',')
+    var arr = input.split('、')
     selectValue = arr
     var frag = document.createDocumentFragment()
     for( var i=0 ; i<arr.length ; i++ ){
