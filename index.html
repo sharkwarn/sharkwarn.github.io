@@ -2,12 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dva Demo</title>
-  <link rel="stylesheet" href="/index.css" />
-<link href="/index.css" rel="stylesheet"></head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>选人名</title>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
 <body>
-  <div id="root"></div>
-<script type="text/javascript" src="/index.js"></script><script type="text/javascript" src="/dist2/a.js"></script></body>
-</html>
+  <textarea id="content" cols="30" rows="10" placeholder="多个人用','分隔开'"></textarea>
+  <br/>
+  <button id="btn">生成名单</button>
+  <h5>名单</h5>
+  <ul id="namelist">
 
+  </ul>
+  <br/>
+  <button id="select">选择</button>
+</body>
+</html>
+<script>
+  var selectValue = []
+  var btn = document.querySelector('#btn')
+  btn.addEventListener('click', function(e){
+    var input = document.querySelector('#content').value
+    if( !input ){
+      alert('输入框为空！')
+      return
+    }
+    var arr = input.split(',')
+    selectValue = arr
+    var frag = document.createDocumentFragment()
+    for( var i=0 ; i<arr.length ; i++ ){
+      var item = document.createElement('li')
+      item.innerHTML = i
+      frag.appendChild(item)
+    }
+    document.querySelector('#namelist').appendChild(frag)
+  }, false)
+
+  var selectBtn = document.querySelector('#select')
+  selectBtn.addEventListener('click', function(){
+    if( selectValue.length == 0 ){
+      return alert('名单为空')
+    }
+    var random = Math.floor(Math.random()*(selectValue.length))
+    var value = selectValue[random]
+    alert(value)
+  }, false)
+</script>
