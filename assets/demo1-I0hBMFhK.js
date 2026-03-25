@@ -1,0 +1,1 @@
+import"./index-BvaDmCeH.js";import{c as o}from"./index-kQbNtF9u.js";import"./CanvasPool-DuLhk3Hp.js";import"./BatchableSprite-qOYjpB38.js";const t=document.querySelector("#app");o({container:t,title:"Demo 1",background:"#2d4967"});
