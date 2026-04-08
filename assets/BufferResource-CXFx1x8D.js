@@ -1,4 +1,4 @@
-import{y as U,D as g,F as c,H as S,J as _,K as m,h as I,L as p}from"./index-C1emNKSB.js";const x={name:"local-uniform-bit",vertex:{header:`
+import{y as U,J as g,K as c,L as S,M as _,N as m,h as I,O as p}from"./index-Dm9rAbq2.js";const x={name:"local-uniform-bit",vertex:{header:`
 
             struct LocalUniforms {
                 uTransformMatrix:mat3x3<f32>,
@@ -15,7 +15,7 @@ import{y as U,D as g,F as c,H as S,J as _,K as m,h as I,L as p}from"./index-C1em
             {
                 vPosition = vec4(roundPixels(vPosition.xy, globalUniforms.uResolution), vPosition.zw);
             }
-        `}},D={...x,vertex:{...x.vertex,header:x.vertex.header.replace("group(1)","group(2)")}},C={name:"local-uniform-bit",vertex:{header:`
+        `}},O={...x,vertex:{...x.vertex,header:x.vertex.header.replace("group(1)","group(2)")}},C={name:"local-uniform-bit",vertex:{header:`
 
             uniform mat3 uTransformMatrix;
             uniform vec4 uColor;
@@ -28,7 +28,7 @@ import{y as U,D as g,F as c,H as S,J as _,K as m,h as I,L as p}from"./index-C1em
             {
                 gl_Position.xy = roundPixels(gl_Position.xy, uResolution);
             }
-        `}},O={name:"texture-bit",vertex:{header:`
+        `}},D={name:"texture-bit",vertex:{header:`
 
         struct TextureUniforms {
             uTextureMatrix:mat3x3<f32>,
@@ -182,4 +182,4 @@ import{y as U,D as g,F as c,H as S,J as _,K as m,h as I,L as p}from"./index-C1em
         data[offset + 1] = v[1];
         data[offset + 2] = v[2];
         data[offset + 3] = v[3];
-    `};class P extends I{constructor({buffer:t,offset:a,size:s}){super(),this.uid=p("buffer"),this._resourceType="bufferResource",this._touched=0,this._resourceId=p("resource"),this._bufferResource=!0,this.destroyed=!1,this.buffer=t,this.offset=a|0,this.size=s,this.buffer.on("change",this.onBufferChange,this)}onBufferChange(){this._resourceId=p("resource"),this.emit("change",this)}destroy(t=!1){this.destroyed=!0,t&&this.buffer.destroy(),this.emit("change",this),this.buffer=null,this.removeAllListeners()}}export{P as B,l as G,k as U,x as a,F as b,B as c,h as d,A as e,C as f,R as g,D as l,O as t,w as u};
+    `};class P extends I{constructor({buffer:t,offset:a,size:s}){super(),this.uid=p("buffer"),this._resourceType="bufferResource",this._touched=0,this._resourceId=p("resource"),this._bufferResource=!0,this.destroyed=!1,this.buffer=t,this.offset=a|0,this.size=s,this.buffer.on("change",this.onBufferChange,this)}onBufferChange(){this._resourceId=p("resource"),this.emit("change",this)}destroy(t=!1){this.destroyed=!0,t&&this.buffer.destroy(),this.emit("change",this),this.buffer=null,this.removeAllListeners()}}export{P as B,l as G,k as U,x as a,F as b,B as c,h as d,A as e,C as f,R as g,O as l,D as t,w as u};
