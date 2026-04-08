@@ -4,9 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cutout 图片涂抹抠图工具</title>
-    <script type="module" crossorigin src="/assets/cutout-D1qg2Vib.js"></script>
+    <script type="module" crossorigin src="/assets/cutout-D39pUdac.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-B5Qt9EMX.js">
-    <link rel="stylesheet" crossorigin href="/assets/cutout-gPr61D1x.css">
+    <link rel="stylesheet" crossorigin href="/assets/cutout-E0FPLuSZ.css">
   </head>
   <body>
     <div id="app" class="app">
@@ -27,6 +27,7 @@
             <button class="tool-btn" data-tool="eraser">橡皮擦</button>
             <button class="tool-btn" data-tool="fill">自动填色</button>
             <button class="tool-btn" data-tool="wand">智能魔棒</button>
+            <button class="tool-btn" data-tool="pan">拖拽</button>
           </div>
 
           <div class="group slider-group">
@@ -59,7 +60,7 @@
       <main class="workspace">
         <div id="emptyTip" class="empty-tip">请选择图片开始抠图</div>
         <div id="gestureHint" class="gesture-hint hidden">
-          单指绘制 / 双指缩放画布 / 顶部按钮展开工具
+          单指绘制或拖拽（切换工具） / 双指缩放画布 / 顶部按钮展开工具
         </div>
         <div id="canvasScroll" class="canvas-scroll hidden">
           <div id="canvasViewport" class="canvas-viewport">
