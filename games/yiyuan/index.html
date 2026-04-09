@@ -4,17 +4,119 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>yiyuan - 角色展示</title>
-    <link rel="stylesheet" crossorigin href="/assets/yiyuan-c2ztIkIK.css">
+    <link rel="stylesheet" crossorigin href="/assets/yiyuan-DTxzojVs.css">
   </head>
   <body>
     <div class="gallery">
       <h1>yiyuan 角色展示</h1>
-      <div class="image-grid">
-        <div class="image-card">
-          <img src="/assets/character-B8YrsYUd.jpg" alt="角色立绘" />
-          <p class="caption">角色立绘</p>
-        </div>
+      <div class="category-list">
+        <section class="category-section">
+          <h2 class="category-title">完整角色</h2>
+          <div class="image-grid">
+            <button class="image-card" type="button" data-src="./images/character.jpg" data-alt="角色立绘">
+              <img src="/assets/character-B8YrsYUd.jpg" alt="角色立绘" loading="lazy" />
+              <span class="caption">角色立绘</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="category-section">
+          <h2 class="category-title">头部</h2>
+          <div class="image-grid">
+            <button class="image-card" type="button" data-src="./images/head.png" data-alt="头部">
+              <img src="/assets/head-CaCKzNUz.png" alt="头部" loading="lazy" />
+              <span class="caption">头部</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="category-section">
+          <h2 class="category-title">躯干</h2>
+          <div class="image-grid">
+            <button class="image-card" type="button" data-src="./images/back.png" data-alt="背部">
+              <img src="/assets/back-vzaGWggm.png" alt="背部" loading="lazy" />
+              <span class="caption">背部</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="category-section">
+          <h2 class="category-title">手臂</h2>
+          <div class="image-grid">
+            <button class="image-card" type="button" data-src="./images/arm_left.png" data-alt="左臂">
+              <img src="/assets/arm_left-DnIfI2lE.png" alt="左臂" loading="lazy" />
+              <span class="caption">左臂</span>
+            </button>
+            <button class="image-card" type="button" data-src="./images/arm_right.png" data-alt="右臂">
+              <img src="/assets/arm_right-wgcQzxeo.png" alt="右臂" loading="lazy" />
+              <span class="caption">右臂</span>
+            </button>
+            <button class="image-card" type="button" data-src="./images/arm2.png" data-alt="额外手臂">
+              <img src="/assets/arm2-BVgchbwv.png" alt="额外手臂" loading="lazy" />
+              <span class="caption">额外手臂</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="category-section">
+          <h2 class="category-title">腿部</h2>
+          <div class="image-grid">
+            <button class="image-card" type="button" data-src="./images/leg.png" data-alt="左腿">
+              <img src="/assets/leg-CcqyUXiI.png" alt="左腿" loading="lazy" />
+              <span class="caption">左腿</span>
+            </button>
+            <button class="image-card" type="button" data-src="./images/leg2.png" data-alt="右腿">
+              <img src="/assets/leg2-D2It7ji0.png" alt="右腿" loading="lazy" />
+              <span class="caption">右腿</span>
+            </button>
+          </div>
+        </section>
       </div>
     </div>
+
+    <div class="lightbox" id="lightbox" aria-hidden="true">
+      <button class="lightbox-close" type="button" aria-label="关闭大图">&times;</button>
+      <img class="lightbox-image" src="" alt="" />
+    </div>
+
+    <script>
+      const lightbox = document.getElementById("lightbox");
+      const lightboxImage = lightbox.querySelector(".lightbox-image");
+      const closeButton = lightbox.querySelector(".lightbox-close");
+      const cards = document.querySelectorAll(".image-card");
+
+      function openLightbox(src, alt) {
+        lightboxImage.src = src;
+        lightboxImage.alt = alt;
+        lightbox.classList.add("is-open");
+        lightbox.setAttribute("aria-hidden", "false");
+        document.body.classList.add("lightbox-active");
+      }
+
+      function closeLightbox() {
+        lightbox.classList.remove("is-open");
+        lightbox.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("lightbox-active");
+      }
+
+      cards.forEach((card) => {
+        card.addEventListener("click", () => {
+          openLightbox(card.dataset.src, card.dataset.alt || card.querySelector("img").alt || "大图预览");
+        });
+      });
+
+      closeButton.addEventListener("click", closeLightbox);
+      lightbox.addEventListener("click", (event) => {
+        if (event.target === lightbox) {
+          closeLightbox();
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && lightbox.classList.contains("is-open")) {
+          closeLightbox();
+        }
+      });
+    </script>
   </body>
 </html>
