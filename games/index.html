@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Games - 游戏合集</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 50px;
+        }
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .game-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.15);
+        }
+        .game-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        .game-card:nth-child(2) .game-icon { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .game-card:nth-child(3) .game-icon { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .game-card:nth-child(4) .game-icon { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .game-card:nth-child(5) .game-icon { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .game-card:nth-child(6) .game-icon { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        .game-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .game-desc {
+            color: #aaa;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-top: 12px;
+            background: rgba(0, 212, 255, 0.15);
+            color: #00d4ff;
+        }
+        .badge.new {
+            background: rgba(67, 233, 123, 0.15);
+            color: #43e97b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 AI Games</h1>
+        <p class="subtitle">基于 AI 辅助开发的游戏与工具合集</p>
+        
+        <div class="games-grid">
+            <a href="./BallBrawl/" class="game-card">
+                <div class="game-icon">⚔️</div>
+                <div class="game-title">Ball Brawl</div>
+                <div class="game-desc">球球大作战 - 多人在线对战游戏，包含丰富的技能卡牌系统</div>
+                <span class="badge">游戏</span>
+            </a>
+            
+            <a href="./spine-ai/" class="game-card">
+                <div class="game-icon">🦴</div>
+                <div class="game-title">Spine AI</div>
+                <div class="game-desc">AI 骨骼动画编辑器 - 支持自动骨骼绑定、动画生成</div>
+                <span class="badge new">AI 工具</span>
+            </a>
+            
+            <a href="./cutout/" class="game-card">
+                <div class="game-icon">✂️</div>
+                <div class="game-title">智能抠图</div>
+                <div class="game-desc">AI 辅助图片抠图工具，支持拖拽交互</div>
+                <span class="badge">工具</span>
+            </a>
+            
+            <a href="./yiyuan/" class="game-card">
+                <div class="game-icon">🖼️</div>
+                <div class="game-title">一元素材</div>
+                <div class="game-desc">游戏素材查看器，支持缩略图和 Lightbox 大图查看</div>
+                <span class="badge">工具</span>
+            </a>
+            
+            <a href="./demo1/" class="game-card">
+                <div class="game-icon">🎯</div>
+                <div class="game-title">Demo 1</div>
+                <div class="game-desc">技术演示项目</div>
+                <span class="badge">演示</span>
+            </a>
+            
+            <a href="./demo2/" class="game-card">
+                <div class="game-icon">🧪</div>
+                <div class="game-title">Demo 2</div>
+                <div class="game-desc">技术演示项目</div>
+                <span class="badge">演示</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
