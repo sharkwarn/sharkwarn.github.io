@@ -1,1 +1,0 @@
-import"./modulepreload-polyfill-B5Qt9EMX.js";import{c as o}from"./index-ChoLJ45v.js";import"./index-CPSgI7uE.js";const e=document.querySelector("#app");o({container:e,title:"Demo 1",background:"#2d4967"});
