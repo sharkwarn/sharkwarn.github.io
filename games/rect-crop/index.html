@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>矩形裁剪</title>
+    <script type="module" crossorigin src="/assets/rectCrop-DRONs1_4.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-B5Qt9EMX.js">
+    <link rel="stylesheet" crossorigin href="/assets/rectCrop-BQWQ_s17.css">
+  </head>
+  <body>
+    <div class="app">
+      <header class="toolbar">
+        <label class="file-label">
+          <input id="uploadInput" type="file" accept="image/*" />
+          上传图片
+        </label>
+        <button id="clearBtn" type="button">清空选区</button>
+        <button id="exportBtn" class="primary" type="button">导出裁剪 PNG</button>
+        <span id="status" class="status">请先上传图片</span>
+      </header>
+
+      <main class="workspace">
+        <div id="scroll" class="scroll hidden">
+          <canvas id="canvas"></canvas>
+        </div>
+        <div id="emptyTip" class="empty-tip">上传图片后，拖拽矩形区域进行裁剪</div>
+      </main>
+    </div>
+
+  </body>
+</html>
