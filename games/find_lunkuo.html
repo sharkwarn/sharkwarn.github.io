@@ -81,6 +81,23 @@
       align-items: center;
     }
 
+    .field-row {
+      display: grid;
+      grid-template-columns: auto 120px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .field-row input[type="number"] {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--text);
+      background: #fff;
+    }
+
     .slider-row input[type="range"] {
       width: 100%;
     }
@@ -134,6 +151,16 @@
         <input id="threshold" type="range" min="0" max="255" value="80" />
       </div>
 
+      <div class="field-row">
+        <label for="vertexCount">顶点数量</label>
+        <input id="vertexCount" type="number" min="3" max="500" step="1" value="10" />
+      </div>
+
+      <div class="slider-row">
+        <label for="detail">细节 Detail：<strong id="detailValue">60</strong></label>
+        <input id="detail" type="range" min="0" max="100" value="60" />
+      </div>
+
       <div class="stats" id="stats">请先上传一张带透明背景的图片。</div>
     </section>
 
@@ -147,6 +174,9 @@
     const dropzone = document.getElementById('dropzone');
     const thresholdInput = document.getElementById('threshold');
     const thresholdValue = document.getElementById('thresholdValue');
+    const vertexCountInput = document.getElementById('vertexCount');
+    const detailInput = document.getElementById('detail');
+    const detailValue = document.getElementById('detailValue');
     const stats = document.getElementById('stats');
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -157,6 +187,7 @@
     const state = {
       image: null,
       imageData: null,
+      rawContour: [],
       contour: [],
       vertices: []
     };
@@ -177,16 +208,30 @@
       return Math.hypot(a.x - b.x, a.y - b.y);
     }
 
-    function marchingSquares(imageData, threshold) {
+    function samePoint(a, b, eps = 1e-6) {
+      return Math.abs(a.x - b.x) <= eps && Math.abs(a.y - b.y) <= eps;
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function getTargetVertexCount() {
+      const n = Number.parseInt(vertexCountInput.value, 10);
+      return clamp(Number.isFinite(n) ? n : 10, 3, 500);
+    }
+
+    function marchingSquares(imageData, threshold, step = 1) {
       const w = imageData.width;
       const h = imageData.height;
       const alphaAt = (x, y) => imageData.data[(y * w + x) * 4 + 3];
+      const half = step / 2;
 
       const edgePoint = (edge, x, y) => {
-        if (edge === 0) return { x: x + 0.5, y: y };       // top
-        if (edge === 1) return { x: x + 1, y: y + 0.5 };   // right
-        if (edge === 2) return { x: x + 0.5, y: y + 1 };   // bottom
-        return { x: x, y: y + 0.5 };                       // left
+        if (edge === 0) return { x: x + half, y: y };          // top
+        if (edge === 1) return { x: x + step, y: y + half };   // right
+        if (edge === 2) return { x: x + half, y: y + step };   // bottom
+        return { x: x, y: y + half };                          // left
       };
 
       const table = {
@@ -208,12 +253,12 @@
 
       const segments = [];
 
-      for (let y = 0; y < h - 1; y++) {
-        for (let x = 0; x < w - 1; x++) {
+      for (let y = 0; y < h - step; y += step) {
+        for (let x = 0; x < w - step; x += step) {
           const tl = alphaAt(x, y) >= threshold ? 8 : 0;
-          const tr = alphaAt(x + 1, y) >= threshold ? 4 : 0;
-          const br = alphaAt(x + 1, y + 1) >= threshold ? 2 : 0;
-          const bl = alphaAt(x, y + 1) >= threshold ? 1 : 0;
+          const tr = alphaAt(x + step, y) >= threshold ? 4 : 0;
+          const br = alphaAt(x + step, y + step) >= threshold ? 2 : 0;
+          const bl = alphaAt(x, y + step) >= threshold ? 1 : 0;
           const c = tl | tr | br | bl;
           const pairs = table[c];
           if (!pairs) continue;
@@ -334,6 +379,139 @@
       return out;
     }
 
+    function pointToLineDistance(point, lineStart, lineEnd) {
+      const { x: x0, y: y0 } = point;
+      const { x: x1, y: y1 } = lineStart;
+      const { x: x2, y: y2 } = lineEnd;
+
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+
+      if (dx === 0 && dy === 0) {
+        return Math.hypot(x0 - x1, y0 - y1);
+      }
+
+      const t = ((x0 - x1) * dx + (y0 - y1) * dy) / (dx * dx + dy * dy);
+      const tClamped = Math.max(0, Math.min(1, t));
+      const projX = x1 + tClamped * dx;
+      const projY = y1 + tClamped * dy;
+      return Math.hypot(x0 - projX, y0 - projY);
+    }
+
+    function rdpSimplify(points, epsilon = 2) {
+      if (points.length <= 2) return points.slice();
+
+      const start = points[0];
+      const end = points[points.length - 1];
+      let maxDist = 0;
+      let maxIndex = 0;
+
+      for (let i = 1; i < points.length - 1; i++) {
+        const dist = pointToLineDistance(points[i], start, end);
+        if (dist > maxDist) {
+          maxDist = dist;
+          maxIndex = i;
+        }
+      }
+
+      if (maxDist < epsilon) {
+        return [start, end];
+      }
+
+      const left = rdpSimplify(points.slice(0, maxIndex + 1), epsilon);
+      const right = rdpSimplify(points.slice(maxIndex), epsilon);
+      return [...left.slice(0, -1), ...right];
+    }
+
+    function contourToRing(contour) {
+      if (!contour.length) return [];
+      const ring = contour.slice();
+      if (ring.length > 1 && samePoint(ring[0], ring[ring.length - 1])) {
+        ring.pop();
+      }
+      return ring;
+    }
+
+    function ringToClosedContour(ring) {
+      if (!ring.length) return [];
+      return [...ring, ring[0]];
+    }
+
+    function pathBetween(ring, start, end) {
+      const n = ring.length;
+      const out = [ring[start]];
+      let i = start;
+      while (i !== end && out.length <= n + 1) {
+        i = (i + 1) % n;
+        out.push(ring[i]);
+      }
+      return out;
+    }
+
+    function dedupeConsecutive(points) {
+      if (!points.length) return [];
+      const out = [points[0]];
+      for (let i = 1; i < points.length; i++) {
+        if (!samePoint(points[i], out[out.length - 1])) out.push(points[i]);
+      }
+      return out;
+    }
+
+    function simplifyClosedContourRDP(contour, epsilon) {
+      const ring = contourToRing(contour);
+      if (ring.length <= 3) return ringToClosedContour(ring);
+
+      let splitA = 0;
+      let splitB = 1;
+      let maxDist = -1;
+      for (let i = 1; i < ring.length; i++) {
+        const d = distance(ring[splitA], ring[i]);
+        if (d > maxDist) {
+          maxDist = d;
+          splitB = i;
+        }
+      }
+
+      const path1 = pathBetween(ring, splitA, splitB);
+      const path2 = pathBetween(ring, splitB, splitA);
+      const simplified1 = rdpSimplify(path1, epsilon);
+      const simplified2 = rdpSimplify(path2, epsilon);
+
+      let merged = simplified1.slice(0, -1).concat(simplified2.slice(0, -1));
+      merged = dedupeConsecutive(merged);
+
+      if (merged.length < 3) {
+        merged = ring.slice(0, Math.min(3, ring.length));
+      }
+      return ringToClosedContour(merged);
+    }
+
+    function fillToTargetByLongestEdges(ring, targetCount) {
+      const out = ring.slice();
+      if (!out.length) return out;
+
+      while (out.length < targetCount) {
+        let bestIndex = 0;
+        let longest = -1;
+        for (let i = 0; i < out.length; i++) {
+          const j = (i + 1) % out.length;
+          const len = distance(out[i], out[j]);
+          if (len > longest) {
+            longest = len;
+            bestIndex = i;
+          }
+        }
+
+        const nextIndex = (bestIndex + 1) % out.length;
+        const p0 = out[bestIndex];
+        const p1 = out[nextIndex];
+        const mid = { x: (p0.x + p1.x) * 0.5, y: (p0.y + p1.y) * 0.5 };
+        out.splice(bestIndex + 1, 0, mid);
+      }
+
+      return out;
+    }
+
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -346,6 +524,17 @@
       }
 
       ctx.drawImage(state.image, 0, 0, canvas.width, canvas.height);
+
+      if (state.rawContour.length > 1) {
+        ctx.beginPath();
+        ctx.moveTo(state.rawContour[0].x, state.rawContour[0].y);
+        for (let i = 1; i < state.rawContour.length; i++) {
+          ctx.lineTo(state.rawContour[i].x, state.rawContour[i].y);
+        }
+        ctx.strokeStyle = 'rgba(0, 119, 182, 0.45)';
+        ctx.lineWidth = Math.max(1, canvas.width / 420);
+        ctx.stroke();
+      }
 
       if (state.contour.length > 1) {
         ctx.beginPath();
@@ -374,17 +563,35 @@
       if (!state.imageData) return;
 
       const threshold = Number(thresholdInput.value);
+      const detail = Number(detailInput.value);
+      const targetVertices = getTargetVertexCount();
       thresholdValue.textContent = String(threshold);
+      detailValue.textContent = String(detail);
 
-      const contour = marchingSquares(state.imageData, threshold);
-      const vertices = sampleVertices(contour, 10);
+      const detailRatio = clamp(detail / 100, 0, 1);
+      const marchingStep = Math.max(1, Math.round(1 + (1 - detailRatio) * 7));
+      const rawContour = marchingSquares(state.imageData, threshold, marchingStep);
 
-      state.contour = contour;
-      state.vertices = vertices;
+      const scale = Math.max(0.75, Math.min(state.imageData.width, state.imageData.height) / 260);
+      const epsilon = (1 + (1 - detailRatio) * 10) * scale;
+
+      const simplifiedContour = simplifyClosedContourRDP(rawContour, epsilon);
+      let finalVertices = contourToRing(simplifiedContour);
+
+      if (finalVertices.length > targetVertices) {
+        finalVertices = sampleVertices(simplifiedContour, targetVertices);
+      } else if (finalVertices.length < targetVertices) {
+        finalVertices = fillToTargetByLongestEdges(finalVertices, targetVertices);
+      }
+
+      state.rawContour = rawContour;
+      state.contour = simplifiedContour;
+      state.vertices = finalVertices;
 
       draw();
 
-      stats.textContent = `尺寸 ${state.imageData.width} × ${state.imageData.height}，轮廓点 ${contour.length}，采样顶点 ${vertices.length}`;
+      const simplifiedCount = contourToRing(simplifiedContour).length;
+      stats.textContent = `尺寸 ${state.imageData.width} × ${state.imageData.height}，原始轮廓点 ${rawContour.length}，RDP 后轮廓点 ${simplifiedCount}，实际顶点数 ${finalVertices.length}（目标 ${targetVertices}）`;
     }
 
     function loadFile(file) {
@@ -424,6 +631,13 @@
     });
 
     thresholdInput.addEventListener('input', processImage);
+    detailInput.addEventListener('input', processImage);
+    vertexCountInput.addEventListener('input', processImage);
+    vertexCountInput.addEventListener('change', () => {
+      const clamped = getTargetVertexCount();
+      vertexCountInput.value = String(clamped);
+      processImage();
+    });
 
     ['dragenter', 'dragover'].forEach((evt) => {
       dropzone.addEventListener(evt, (e) => {
