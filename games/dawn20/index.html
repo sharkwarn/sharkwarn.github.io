@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0b1410">
+<title>黎明前二十分钟 · 几何版</title>
+<style>
+  :root {
+    --bg: #0b1410; --panel: #14211b; --panel2: #1b2b23; --line: #2b4436;
+    --fg: #e6f5ec; --dim: #8fae9e; --accent: #3ddc97; --warn: #ff6b6b; --gold: #ffd166;
+    --purple: #c084fc;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg);
+    font-family: "PingFang SC", "Hiragino Sans GB", system-ui, -apple-system, sans-serif;
+    overflow: hidden; user-select: none; }
+  #game { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+  .overlay { position: fixed; inset: 0; display: none; flex-direction: column;
+    background: rgba(6,12,9,0.86); backdrop-filter: blur(6px); z-index: 10; overflow-y: auto; }
+  .overlay.show { display: flex; }
+  .center { margin: auto; padding: 20px; width: 100%; max-width: 1080px; }
+
+  h1 { font-size: 34px; margin: 0 0 4px; letter-spacing: 2px;
+       background: linear-gradient(90deg,#c084fc,#3ddc97 60%,#ffd166);
+       -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sub { color: var(--dim); font-size: 13px; margin-bottom: 18px; line-height: 1.6; }
+  .sub b { color: var(--fg); font-weight: 600; }
+  .section { margin-bottom: 16px; }
+  .section > .label { font-size: 12px; color: var(--dim); letter-spacing: 1px; margin-bottom: 8px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .pick { border: 1px solid var(--line); background: var(--panel); border-radius: 10px;
+    padding: 8px 12px; font-size: 13px; color: var(--fg); cursor: pointer; min-width: 84px;
+    display: flex; align-items: center; gap: 8px; transition: .12s; }
+  .pick:hover { border-color: #437056; }
+  .pick.sel { border-color: var(--accent); background: #17352a; box-shadow: 0 0 0 1px var(--accent) inset; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; flex: 0 0 auto; }
+  .pick small { color: var(--dim); font-size: 11px; }
+
+  .btn { margin-top: 6px; width: 100%; padding: 14px; font-size: 16px; font-weight: 700; letter-spacing: 2px;
+    border-radius: 12px; border: 0; background: linear-gradient(180deg,#3ddc97,#22a86f); color: #062014; cursor: pointer; }
+  .btn:active { transform: translateY(1px); }
+  .btn.ghost { background: transparent; border: 1px solid var(--line); color: var(--fg); font-weight: 500; }
+
+  #cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+  .card { border: 1px solid var(--line); background: linear-gradient(180deg,var(--panel2),var(--panel));
+    border-radius: 12px; padding: 14px; cursor: pointer; transition: .12s; min-height: 150px; display: flex; flex-direction: column; }
+  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .card.syn { border-color: #7f1d1d; box-shadow: 0 0 0 1px #7f1d1d inset; }
+  .card.tome { border-color: var(--purple); }
+  .card .tree { font-size: 11px; color: var(--dim); letter-spacing: 1px; }
+  .card .name { font-size: 17px; font-weight: 700; margin: 6px 0 8px; }
+  .card .desc { font-size: 12.5px; color: #bcd6c8; line-height: 1.55; flex: 1; }
+  .card .key { font-size: 11px; color: var(--dim); margin-top: 10px; }
+  .lvltitle { text-align: center; margin-bottom: 14px; }
+  .lvltitle .t { font-size: 22px; font-weight: 700; }
+  .lvltitle .s { color: var(--dim); font-size: 12px; margin-top: 4px; }
+  #reroll { margin: 12px auto 0; max-width: 260px; }
+
+  .end { text-align: center; }
+  .end h2 { font-size: 30px; margin: 0 0 6px; }
+  .end .stats { display: flex; gap: 24px; justify-content: center; margin: 20px 0 24px; flex-wrap: wrap; }
+  .end .stat b { display: block; font-size: 26px; font-variant-numeric: tabular-nums; }
+  .end .stat span { font-size: 12px; color: var(--dim); }
+  .end .btn { max-width: 320px; margin: 8px auto; }
+  .hint { color: var(--dim); font-size: 12px; text-align: center; margin-top: 12px; }
+  .taken { font-size: 12px; color: var(--dim); line-height: 1.7; word-break: break-all; max-height: 84px; overflow-y: auto; }
+  .souls { position: absolute; top: 18px; right: 24px; z-index: 5; font-size: 13px; color: #ffd166; letter-spacing: .02em; }
+  .pick.locked { opacity: .55; }
+  #toast { position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%); background: #1b2a22ee; color: #e8f5ee;
+    padding: 8px 16px; border-radius: 10px; font-size: 13px; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 90; }
+  #toast.show { opacity: 1; }
+  /* 符文面板 */
+  #runeRows { display: flex; flex-direction: column; gap: 10px; max-height: 44vh; overflow-y: auto; padding-right: 4px; }
+  #runes .btn { display: block; max-width: 300px; margin: 14px auto 0; }
+  .runeGroup { font-size: 12px; color: var(--dim); letter-spacing: .08em; margin: 6px 0 2px; }
+  .runeRow { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .rune { background: #16241d; border: 1px solid #2c4437; border-radius: 10px; color: #e8f5ee; padding: 8px 10px;
+    min-width: 150px; text-align: left; font-size: 12px; cursor: pointer; }
+  .rune b { display: block; font-size: 13px; margin-bottom: 2px; }
+  .rune small { color: var(--dim); display: block; line-height: 1.4; }
+  .rune.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+  .rune.lock { opacity: .45; }
+  .rune .tag { float: right; font-size: 11px; color: #ffd166; }
+  .pausebtn { position: fixed; top: 76px; left: 18px; z-index: 40; width: 34px; height: 34px; border-radius: 9px;
+    background: rgba(18,32,25,.82); border: 1px solid #2c4437; color: #cfe8db; font: 700 13px/1 system-ui; cursor: pointer; display: none; }
+  .pausebtn.on { display: block; }
+  .pauselist { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 6px; max-height: 46vh; overflow: auto; margin: 14px 0; text-align: left; }
+  .pauselist div { background: #14221c; border: 1px solid #25392f; border-radius: 8px; padding: 6px 9px; font-size: 12px; color: #d7ece2; }
+  .pauselist b { color: #7ff0b0; font-weight: 600; }
+  .pauselist span { float: right; color: #ffd166; font-size: 11px; }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<!-- 主菜单 -->
+<div class="overlay show" id="menu">
+  <div class="center">
+    <h1>黎明前二十分钟</h1>
+    <div class="sub">几何占位版 · 20:00 一局 · 杀怪升级 5 选 1 · 撑到黎明<br>
+      <b>PC</b>：WASD 移动 / 鼠标瞄准 / 自动开火 &nbsp;·&nbsp; <b>手机</b>：左半屏移动、右半屏瞄准</div>
+
+    <div class="section"><div class="label">角色</div><div class="row" id="chars"></div></div>
+    <div class="section"><div class="label">武器</div><div class="row" id="weaps"></div></div>
+    <div class="section"><div class="label">地图</div><div class="row" id="maps"></div></div>
+    <div class="section"><div class="label">黑暗等级（难度）</div><div class="row" id="darks"></div></div>
+    <div class="section"><div class="label">模式</div><div class="row" id="modes"></div></div>
+    <div class="section"><div class="label">符文（局外成长 · souls 购买 · 每行装备 1 条）</div>
+      <button class="btn ghost" id="runesBtn" style="max-width:300px;margin:0 auto">打开符文面板 ◈</button></div>
+    <div id="souls" class="souls">◈ 0 souls</div>
+    <button class="btn ghost" id="muteBtn" style="max-width:300px;margin:10px auto 0">音效：开（按 M）</button>
+    <button class="btn" id="startBtn">开始 (20:00)</button>
+    <div class="hint" id="menuHint"></div>
+  </div>
+</div>
+
+<!-- 升级 -->
+<div class="overlay" id="levelup">
+  <div class="center">
+    <div class="lvltitle"><div class="t" id="luTitle">升级</div><div class="s" id="luSub"></div></div>
+    <div id="cards"></div>
+    <button class="btn ghost" id="reroll" style="display:none">重摇（莎娜专属，每级 1 次）</button>
+  </div>
+</div>
+
+<!-- 秘典 -->
+<button class="pausebtn" id="pauseBtn" title="暂停 (Esc)">II</button>
+<div class="overlay" id="pause">
+  <div class="center">
+    <h1 style="font-size:26px">暂停</h1>
+    <div class="sub" id="pauseSub"></div>
+    <div class="pauselist" id="pauseList"></div>
+    <button class="btn" id="resumeBtn">继续</button>
+    <button class="btn ghost" id="quitBtn">放弃本局，回主菜单</button>
+  </div>
+</div>
+
+<div class="overlay" id="tome">
+  <div class="center">
+    <div class="lvltitle"><div class="t" style="color:var(--purple)">秘典</div><div class="s">Boss 掉落 · 三选一（多数带代价）</div></div>
+    <div id="tomeCards"></div>
+  </div>
+</div>
+
+<!-- 符文面板 -->
+<div class="overlay" id="runes">
+  <div class="center">
+    <div class="lvltitle"><div class="t">符文</div><div class="s" id="runeSub">剑系 / 盾系 · 每行同时只能装备 1 条 · 点卡片升级，点「装备」切换</div></div>
+    <div id="runeRows"></div>
+    <button class="btn" id="runesClose">返回</button>
+  </div>
+</div>
+
+<!-- 结算 -->
+<div class="overlay" id="end">
+  <div class="center end">
+    <h2 id="endTitle">黎明未至</h2>
+    <div id="endSub" class="sub" style="margin-bottom:0"></div>
+    <div class="stats" id="endStats"></div>
+    <div id="endTaken" class="taken"></div>
+    <button class="btn" id="againBtn">再来一局</button>
+    <button class="btn ghost" id="menuBtn">回主菜单</button>
+  </div>
+</div>
+
+<script src="src/save.js"></script>
+<script src="src/data.js"></script>
+<script src="src/upgrades.js"></script>
+<script src="src/evolutions.js"></script>
+<script src="src/audio.js"></script>
+<script src="src/game.js"></script>
+<script src="src/main.js"></script>
+<div id="toast"></div>
+</body>
+</html>
